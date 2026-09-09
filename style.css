@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    }
+    header {
+        background-color: #2f5d8a;
+        color: white;
+        padding: 20px;
+        text-align: center;
+}
+        main {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                }
+
+                label {
+                    font-weight: bold;
+                    }
+
+                    input {
+                        padding: 10px;
+                        border: 1px solid #ccc;
+                        border-radius: 4px;
+                        }
+
+                        button {
+                            background-color: #2f5d8a;
+                            color: white;
+                            padding: 10px 20px;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            }
+h2 {
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #2f5d8a;
+    color: white;
+}
+
+tbody tr:hover {
+    background-color: #f2f2f2;
+}
+#consultaMedia {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+#consultaMedia h2 {
+    margin-top: 0;
+}
+
+#resultadoAluno {
+    margin-top: 15px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+td button {
+    padding: 8px 14px;
+    margin-right: 5px;
+}
+
+td button:last-child {
+    background-color: #b94a48;
+}
+
+td button:last-child:hover {
+    background-color: #a94442;
+}

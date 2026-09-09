@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduNotas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ <header>
+    <h1>EduNotas</h1>
+ </header>
+
+ <main>
+ <form id="formNota">
+    <label for="aluno_id">Aluno ID:</label>
+    <input type="number" id="aluno_id" required>
+    <label for="disciplina">Disciplina</label>
+<input type="text" id="disciplina" required>
+<label for="nota">Nota:</label>
+<input type="number" id="nota" step="0.01" min="0" max="10" required>
+<button type="submit">Cadastrar Nota</button>
+ </form>
+ <div id="consultaMedia">
+    <h2>Consultar média do aluno</h2>
+
+    <label for="alunoMedia">Aluno ID:</label>
+    <input type="number" id="alunoMedia">
+
+    <button type="button" onclick="calcularMediaAluno()">Calcular média</button>
+
+    <div id="resultadoAluno"></div>
+</div>
+ <h2>Notas cadastradas</h2>
+<table id="tabelaNotas">
+   <thead>
+      <tr>
+         <th>ID</th>
+         <th>Aluno ID</th>
+         <th>Disciplina</th>
+         <th>Nota</th>
+         <th>Ações</th>
+      </tr>
+   </thead>
+<tbody id="corpoTabela"></tbody>
+</table>
+<div id="resultadoMedia"></div>
+</main>
+ <script>
+    async function carregarNotas() {
+ const resposta = await fetch("http://localhost:3000/notas");
+ const notas = await resposta.json();
+ const corpoTabela = document.getElementById("corpoTabela");
+ corpoTabela.innerHTML = "";
+ 
+ notas.forEach((nota) => {
+ const linha = document.createElement("tr");
+ linha.innerHTML = `
+<td>${nota.id}</td>
+ <td>${nota.aluno_id}</td>
+<td>${nota.disciplina}</td>
+ <td>${nota.nota}</td>
+ <td>
+    <button onclick="editarNota(${nota.id}, '${nota.disciplina}', ${nota.nota})">Editar</button>
+    <button onclick="excluirNota(${nota.id})">Excluir</button>
+</td>
+`;
+ corpoTabela.appendChild(linha);
+});
+ }
+ async function calcularMediaAluno() {
+    const alunoId = document.getElementById("alunoMedia").value;
+    const resultadoAluno = document.getElementById("resultadoAluno");
+
+    const resposta = await fetch("http://localhost:3000/notas");
+    const notas = await resposta.json();
+
+    const notasAluno = notas.filter(nota => nota.aluno_id == alunoId);
+
+    if (notasAluno.length === 0) {
+        resultadoAluno.innerHTML = "<h3>Aluno não encontrado ou sem notas cadastradas.</h3>";
+        return;
+    }
+
+    const soma = notasAluno.reduce((total, item) => total + Number(item.nota), 0);
+    const media = soma / notasAluno.length;
+    const situacao = media > 6.5 ? "APROVADO" : "REPROVADO";
+    const corSituacao = media > 6.5 ? "green" : "red";
+
+    resultadoAluno.innerHTML =
+      
+    `<h3>Média do aluno ${alunoId}: ${media.toFixed(2)} - <span style="color: ${corSituacao};">${situacao}</span></h3>`;
+}
+ async function excluirNota(id) {
+    const confirmar = confirm("Deseja realmente excluir esta nota?");
+
+    if (!confirmar) return;
+
+    const resposta = await fetch(`http://localhost:3000/notas/${id}`, {
+        method: "DELETE"
+    });
+
+    const dados = await resposta.json();
+    alert(dados.mensagem);
+
+    await carregarNotas();
+    document.getElementById("resultadoAluno").innerHTML = "";
+}
+async function editarNota(id, disciplinaAtual, notaAtual) {
+    const novaDisciplina = prompt("Nova disciplina:", disciplinaAtual);
+    if (novaDisciplina === null) return;
+
+    const novaNota = prompt("Nova nota:", notaAtual);
+    if (novaNota === null) return;
+
+    const resposta = await fetch(`http://localhost:3000/notas/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            disciplina: novaDisciplina,
+            nota: novaNota
+        })
+    });
+
+    const dados = await resposta.json();
+    alert(dados.mensagem);
+
+    await carregarNotas();
+}
+const form = document.getElementById("formNota");
+ form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const aluno_id = document.getElementById("aluno_id").value;
+ const disciplina = document.getElementById("disciplina").value;    
+ const nota = document.getElementById("nota").value;
+ const resposta = await fetch("http://localhost:3000/notas", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ aluno_id, disciplina, nota })
+ });
+ const dados = await resposta.json();
+ alert(dados.mensagem);
+ form.reset();
+ await carregarNotas();
+  }); 
+carregarNotas();
+</script>   
+</body>
+</html>
